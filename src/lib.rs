@@ -4,7 +4,9 @@ use std::fs;
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
 
-    println!("WITH TEXT:\n{}", contents);
+    for line in search(&config.query, &contents) {
+        println!("{}", line)
+    }
     Ok(())
 }
 
@@ -14,7 +16,7 @@ pub struct Config {
 }
 
 impl Config {
-    // we retrun a Result because we want to return an error if the number of arguments is not correct
+    // we return a Result because we want to return an error if the number of arguments is not correct
     // we use the &str type because we don't need to own the data
     // we don't need to return a panic! because is a user error, not an application error
     pub fn new(args: &[String]) -> Result<Config, &str> {
@@ -28,5 +30,31 @@ impl Config {
         let filename = args[2].clone();
 
         Ok(Config { query, filename })
+    }
+}
+
+pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let mut results = Vec::new();
+
+    for line in contents.lines() {
+        if line.contains(query) {
+            results.push(line);
+        }
+    }
+    results
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*; // we bring the parent scope into the current scope
+
+    #[test]
+    fn one_result() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.";
+        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
     }
 }
