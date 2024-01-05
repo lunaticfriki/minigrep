@@ -12,7 +12,7 @@ fn main() {
         // we can exit the program without panicking
         // with unwrap_or_else we can specify a closure to call in case of error,
         // and if it is ok, we return the value stored in ok
-        println!("!!! PROBLEM PARSING ARGUMENTS: {}", err);
+        eprintln!("!!! PROBLEM PARSING ARGUMENTS: {}", err);
         process::exit(1);
     });
 
@@ -20,7 +20,7 @@ fn main() {
     println!("IN FILE {}", config.filename);
 
     if let Err(e) = minigrep::run(config) {
-        println!("!!! APPLICATION ERROR: {} !!!", e);
+        eprintln!("!!! APPLICATION ERROR: {} !!!", e);
         process::exit(1);
     }
 }
